@@ -1,0 +1,10 @@
+---
+title: "afficher la donnée"
+output: html_document
+date: "2025-03-06"
+---
+
+```{r}
+data <- read.csv("defi.csv")
+knitr::kable(data)
+```
