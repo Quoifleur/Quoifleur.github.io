@@ -1,10 +1,23 @@
 ---
-title: "afficher la donnée"
-output: html_document
-date: "2025-03-06"
+title: "Projet R et markdown"
+author: "Victor Maury"
+date: "2025-03-29"
+output: 
+  html_document:
+    toc_float: TRUE  
+    theme: united
+    highlight: tango
+    include:
+      after_body: footer.html
+    number_sections: yes
+    exclude: [data-raw, data]
+    css: css/styles.css
 ---
 
-```{r}
-data <- read.csv("defi.csv")
-knitr::kable(data)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+# Passer la valeur suivante à TRUE pour reproduire les extractions.
+knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
 ```
