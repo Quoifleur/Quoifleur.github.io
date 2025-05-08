@@ -1,0 +1,143 @@
+---
+title: "02_bdx"
+author: "Léna et Victor"
+date: "2025-05-07"
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r library, include=FALSE}
+library(DBI)
+library(dplyr)
+library(sf)
+library(mapview)
+library(mapsf)
+library(ggplot2)
+
+# Charger les données
+acc_21_car <- read.csv("data/2023/caract-2023.csv", header = TRUE, sep = ";", dec = ",", colClasses = c("Num_Acc" = "character"))
+acc_21_veh <- read.csv("data/2023/vehicules-2023.csv", header = TRUE, sep = ";", dec = ",", colClasses = c("Num_Acc" = "character"))
+
+vel_21 <- st_read("data/2023/bdx-2023.geojson")
+```
+
+# Création de fonctions pour simplifier le code
+```{r fonction, include=TRUE}
+remove_attribut_g <- function(variable) {
+  variable <- filter(variable, ame_g != "DOUBLE SENS CYCLABLE" & ame_g != "AMENAGEMENT MIXTES PIETON VELO HORS VOIE VERTE" & ame_g != "AUCUN" & ame_g != "AUTRE" & ame_g != "GOULOTTE")
+  return(variable)
+}
+
+remove_attribut_d <- function(variable) {
+  variable <- filter(variable, ame_d != "DOUBLE SENS CYCLABLE" & ame_d != "AMENAGEMENT MIXTES PIETON VELO HORS VOIE VERTE" & ame_d != "AUCUN" & ame_d != "AUTRE" & ame_d != "GOULOTTE")
+  return(variable)
+}
+
+remove_attribut <- function(variable) {
+  variable <- remove_attribut_g(variable)
+  variable <- remove_attribut_d(variable)
+  return(variable)
+}
+
+
+```
+
+# Carte de la localisation des accidents de vélo à Bordeaux et des pistes cyclabes.
+
+```{r 01_intro, include=TRUE}
+
+# Filtrer les données pour ne conserver que les lignes où catv == 1 ou catv == 80
+acc_21_veh <- filter(acc_21_veh, catv == 1 | catv == 80)
+acc_21_car <- filter(acc_21_car, com == 33063)
+vel_21_g <- remove_attribut_g(vel_21)
+vel_21_d <- remove_attribut_d(vel_21)
+#vel_21 <- remove_attribut(vel_21)
+
+# Vérifier les premières lignes des données filtrées
+print(head(acc_21_veh))
+print(head(acc_21_car))
+
+# Réaliser la jointure attributaire avec l'argument relationship
+acc_21_car_veh <- inner_join(acc_21_car, acc_21_veh, by = "Num_Acc", relationship = "many-to-many")
+
+# Vérifier les premières lignes du résultat de la jointure
+#print(head(result))
+
+# Convertir les données en objet spatial
+acc_21_car_veh_sf <- st_as_sf(acc_21_car_veh, coords = c("long", "lat"), crs = 4326)
+
+#Création tampon (géotratement)
+#vel_21_g_buffer <- st_buffer(vel_21_g, dist = 10)
+vel_21_d_buffer <- st_buffer(vel_21_d, dist = 10)
+
+#vel_21_buffer <- st_buffer(vel_21, dist = 10)
+
+# Effectuer une jointure spatiale pour compter les entités dans chaque tampon
+#jointure_vel_acc_g <- st_join(vel_21_g_buffer, acc_21_car_veh_sf, join = st_intersects)
+jointure_vel_acc_d <- st_join(vel_21_d_buffer, acc_21_car_veh_sf, join = st_intersects)
+
+# Compter le nombre d'entités dans chaque tampon
+#entites_count_vel_acc_d <- jointure_vel_acc_d %>%
+#  group_by(id_osm) %>%  # Assurez-vous que 'id_osm' est l'identifiant correct
+#  summarise(nombre_entites = n())
+
+# Aperçue des données chargées
+
+mapview(vel_21_g, zcol = "ame_g", color = c("#0e3f5d", "#1f5e70", "#387d84", "#64a69a", "#8bc2af", "#b1dbc5")) + mapview(vel_21_d, zcol = "ame_d", color = c("#0e3f5d", "#1f5e70", "#8bc2af", "#b1dbc5","#d1fbd5")) + mapview(acc_21_car_veh_sf, color = "red")
+
+```
+## Graphique du nombre d'accidents par type de voie cyclable en 2023
+
+```{r ggplot, include=TRUE}
+
+var = c("BANDE CYCLABLE", "COULOIR BUS+VELO", "DOUBLE SENS CYCLABLE BANDE", "DOUBLE SENS CYCLABLE PISTE", "PISTE CYCLABLE", "VOIE VERTE")
+Nb_acc <- c(0, 0, 0, 0, 0, 0)
+df <- data.frame(var, Nb_acc)
+
+# Compter le nombre d'accidents par type de voie cyclable
+for (i in 1:nrow(jointure_vel_acc_d)) {
+  if (is.na(jointure_vel_acc_d$Num_Acc[i])) {
+    next
+  }
+  if (jointure_vel_acc_d$ame_d[i] == "BANDE CYCLABLE") {
+    df$Nb_acc[1] <- df$Nb_acc[1] + 1
+  } else if (jointure_vel_acc_d$ame_d[i] == "COULOIR BUS+VELO") {
+    df$Nb_acc[2] <- df$Nb_acc[2] + 1
+  } else if (jointure_vel_acc_d$ame_d[i] == "DOUBLE SENS CYCLABLE BANDE") {
+    df$Nb_acc[3] <- df$Nb_acc[3] + 1
+  } else if (jointure_vel_acc_d$ame_d[i] == "DOUBLE SENS CYCLABLE PISTE") {
+    df$Nb_acc[4] <- df$Nb_acc[4] + 1
+  } else if (jointure_vel_acc_d$ame_d[i] == "PISTE CYCLABLE") {
+    df$Nb_acc[5] <- df$Nb_acc[5] + 1
+  } else if (jointure_vel_acc_d$ame_d[i] == "VOIE VERTE") {
+    df$Nb_acc[6] <- df$Nb_acc[6] + 1
+  }
+}
+
+# Créer le graphique
+ggplot(data = df, mapping = aes(x = var, y = Nb_acc)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Nombre d'accidents par type de voie cyclable",
+       x = "Type de voie cyclable",
+       y = "Nombre d'accidents") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
+```
+
+```{r mapSF, eval=FALSE, include=FALSE}
+
+mf_export(entites_count_vel_acc_d, width = 500, height = 500,  filename = "acc_21.png")
+par(mfrow = c(1,2))
+mf_map(entites_count_vel_acc_d, type = "choro", pal = "Burg",
+       border = NA, var = "nombre_entites", breaks = "quantile",)
+mf_layout(title = "lorem ipsum dolore sit amet", credits = "lorem ipsum dolore sit amet")
+dev.off()
+
+```
