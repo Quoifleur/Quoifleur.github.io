@@ -347,15 +347,158 @@ div.tocify {
 </div>
 
 
-<div id="introduction" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Introduction</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.</p>
+<div id="présentation-des-données-utilisées" class="section level1"
+number="1">
+<h1><span class="header-section-number">1</span> Présentation des
+données utilisées</h1>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="2%" />
+<col width="5%" />
+<col width="3%" />
+<col width="17%" />
+<col width="3%" />
+<col width="52%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">nom.fichier</th>
+<th align="left">données</th>
+<th align="left">type.de.données</th>
+<th align="left">projection</th>
+<th align="left">source</th>
+<th align="left">date</th>
+<th align="left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">VT_2024_cyclabilite_dpt17</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">Vélo et Territoires</td>
+<td align="left">2021</td>
+<td align="left">cyclabilité dans le département de Charente</td>
+</tr>
+<tr class="even">
+<td align="left">VT_2024_cyclabilite_dpt33</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">Vélo et Territoires</td>
+<td align="left">2021</td>
+<td align="left">cyclabilité dans le département de Gironde</td>
+</tr>
+<tr class="odd">
+<td align="left">parts_modales_nouvelle_aquitaine_2021</td>
+<td align="left">chiffre</td>
+<td align="left">excel</td>
+<td align="left">na</td>
+<td align="left">Vélo et Territoires / INSEE (enquête mobilités,
+2023)</td>
+<td align="left">2021</td>
+<td align="left">part modale du vélo en Nouvelle Aquitaine en 2021 dans
+les déplacements domicile-travail. Attention, l’intermodalité n’est pas
+prise en compte dans l’étude.</td>
+</tr>
+<tr class="even">
+<td align="left">Les séries longues labellisées du BAAC_2023</td>
+<td align="left">chiffre</td>
+<td align="left">excel</td>
+<td align="left">na</td>
+<td align="left">ONISR</td>
+<td align="left">2023</td>
+<td align="left">accidents de la routes selon les usagers entre 1967 et
+2023</td>
+</tr>
+<tr class="odd">
+<td align="left">france-20250501</td>
+<td align="left">carto</td>
+<td align="left">json</td>
+<td align="left">WGS 1984</td>
+<td align="left">Geovélo / Open Street Map</td>
+<td align="left">1/5/2025</td>
+<td align="left">pistes cyclables en France</td>
+</tr>
+<tr class="even">
+<td align="left">ame_velo_dpt17</td>
+<td align="left">carto</td>
+<td align="left">json</td>
+<td align="left">WGS 1984</td>
+<td align="left">Geovélo / Open Street Map</td>
+<td align="left">1/5/2025</td>
+<td align="left">pistes cyclables de Charente maritime, fichier obtenu
+par exctraction de données du fichier des pistes cyclables au niveau
+national</td>
+</tr>
+<tr class="odd">
+<td align="left">communes</td>
+<td align="left">carto</td>
+<td align="left">json</td>
+<td align="left">Lambert 93</td>
+<td align="left">data.gouv</td>
+<td align="left"></td>
+<td align="left">les communes de nouvelle-aquitaine</td>
+</tr>
+<tr class="even">
+<td align="left">acc_velo_dpt17_2023_communes</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">onisr</td>
+<td align="left">2023</td>
+<td align="left">le nombre d’accidents qui comprend une bicyclette en
+Charente Maritime. Chiffres tirés de la base des séries de 2023 de
+l’ONISR</td>
+</tr>
+<tr class="odd">
+<td align="left">acc_velo_dpt17_comparaison-2019-2023</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">onisr</td>
+<td align="left">2019/2023</td>
+<td align="left">le nombre d’accidents qui comprend une bicyclette en
+Charente Maritime en 2019 et 2023. Chiffres tirés de la base des séries
+de 2023 de l’ONISR</td>
+</tr>
+<tr class="even">
+<td align="left">bdx-2023</td>
+<td align="left">carto</td>
+<td align="left">geojson</td>
+<td align="left">WGS 1984</td>
+<td align="left">Geovélo / Open Street Map</td>
+<td align="left">01/01/2023</td>
+<td align="left">pistes cyclables à Bordeaux, fichier obtenu par
+exctraction de données du fichier des pistes cyclables au niveau
+national</td>
+</tr>
+<tr class="odd">
+<td align="left">caract-2023</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">onisr</td>
+<td align="left">2023</td>
+<td align="left">Le nombre d’accidents qui comprend une bicyclette en à
+Bordeaux. Chiffres tirés de la base des séries de 2023 de l’ONISR par
+des filtres</td>
+</tr>
+<tr class="even">
+<td align="left">vehicules-2023</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">onisr</td>
+<td align="left">2023</td>
+<td align="left">Le nombre d’accidents qui comprend une bicyclette en à
+Bordeaux. Chiffres tirés de la base des séries de 2023 de l’ONISR par
+des filtres</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 <footer>2025, site par Maury Victor et Moreau Léna</footer>
