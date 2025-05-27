@@ -13,7 +13,7 @@
 
 <meta name="date" content="2025-05-07" />
 
-<title>03_ChMv2</title>
+<title>01_Introduction</title>
 
 <script src="site_libs/header-attrs-2.26/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -444,128 +444,217 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">03_ChMv2</h1>
+<h1 class="title toc-ignore">01_Introduction</h1>
 <h4 class="author">Léna et Victor</h4>
 <h4 class="date">2025-05-07</h4>
 
 </div>
 
 
-<div id="préaration-des-données" class="section level2" number="1">
-<h2><span class="header-section-number">1</span> Préaration des
-données</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#Importer les données</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#Importer les données spatiales</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>geo <span class="ot">&lt;-</span><span class="fu">st_read</span>(<span class="st">&quot;data/chm/communes.geojson&quot;</span>)</span></code></pre></div>
-<pre><code>## Reading layer `communes&#39; from data source 
-##   `C:\Users\victo\OneDrive\Documents\.fac\Géographie\L3S6\SIG\Rfinal\RveloETbobo\site\Quoifleur.github.io\data\chm\communes.geojson&#39; 
-##   using driver `GeoJSON&#39;
-## Simple feature collection with 463 features and 20 fields
-## Geometry type: MULTIPOLYGON
-## Dimension:     XY
-## Bounding box:  xmin: 348643.1 ymin: 6448224 xmax: 465056.6 ymax: 6593241
-## Projected CRS: RGF93 v1 / Lambert-93</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>amgt <span class="ot">&lt;-</span><span class="fu">st_read</span>(<span class="st">&quot;data/chm/ame_velo_dept17.geojson&quot;</span>)</span></code></pre></div>
-<pre><code>## Reading layer `ame_velo_dept17&#39; from data source 
-##   `C:\Users\victo\OneDrive\Documents\.fac\Géographie\L3S6\SIG\Rfinal\RveloETbobo\site\Quoifleur.github.io\data\chm\ame_velo_dept17.geojson&#39; 
-##   using driver `GeoJSON&#39;
-## Simple feature collection with 5260 features and 27 fields
-## Geometry type: MULTILINESTRING
-## Dimension:     XY
-## Bounding box:  xmin: -1.560701 ymin: 45.1985 xmax: -0.2112626 ymax: 46.32296
-## Geodetic CRS:  WGS 84</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#Importer la base de données</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>data <span class="ot">&lt;-</span><span class="fu">read_csv2</span>(<span class="st">&quot;data/chm/parts_modales_nouvelle_aquitaine_2021.csv&quot;</span>)</span></code></pre></div>
-<pre><code>## ℹ Using &quot;&#39;,&#39;&quot; as decimal and &quot;&#39;.&#39;&quot; as grouping mark. Use `read_delim()` for more control.</code></pre>
-<pre><code>## Rows: 4306 Columns: 16
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;;&quot;
-## chr  (3): libelle, ratiovp, ratiovtc
-## dbl (13): reg, dep, epci, code_insee, xvelo, xpied, xcar, xtcommun, pm_velo,...
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>show_col_types <span class="ot">=</span> <span class="cn">FALSE</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co">#Jointure attributaire</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>geo_data <span class="ot">&lt;-</span> geo <span class="sc">%&gt;%</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">left_join</span>(data, <span class="at">by =</span> <span class="st">&quot;code_insee&quot;</span>)</span></code></pre></div>
-</div>
-<div id="cartographie-des-aménagements-cyclables" class="section level2"
-number="2">
-<h2><span class="header-section-number">2</span> Cartographie des
-aménagements cyclables</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co">#Representer les pistes cyclables</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">&quot;plot&quot;</span>)</span></code></pre></div>
-<pre><code>## ℹ tmap mode set to &quot;plot&quot;.</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">tm_shape</span>(geo) <span class="sc">+</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">fill.alpha =</span> <span class="fl">0.2</span>, <span class="at">border.col =</span> <span class="st">&quot;grey70&quot;</span>, <span class="at">col =</span> <span class="st">&quot;grey80&quot;</span> )<span class="sc">+</span></span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="fu">tm_shape</span>(amgt)<span class="sc">+</span></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">tm_lines</span>(<span class="at">col =</span> <span class="st">&quot;#49006a&quot;</span>)<span class="sc">+</span></span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">&quot;Aménagements cyclables en Charente-Maritime&quot;</span>)</span></code></pre></div>
-<pre><code>## 
-## ── tmap v3 code detected ───────────────────────────────────────────────────────
-## [v3-&gt;v4] `tm_polygons()`: use &#39;fill&#39; for the fill color of polygons/symbols
-## (instead of &#39;col&#39;), and &#39;col&#39; for the outlines (instead of &#39;border.col&#39;).[tm_polygons()] Argument `fill.alpha` unknown.[v3-&gt;v4] `tm_layout()`: use `tm_title()` instead of `tm_layout(main.title = )`[plot mode] fit legend/component: Some legend items or map compoments do not
-## fit well, and are therefore rescaled.
-## ℹ Set the tmap option `component.autoscale = FALSE` to disable rescaling.</code></pre>
-<p><img src="03_ChMv2_files/figure-html/carto1-1.png" width="672" /> ##
-Cartographie des données d’usage (part modale du vélo)</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co">#Representer les donnees d&#39;usage dans le département</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">&quot;plot&quot;</span>)</span></code></pre></div>
-<pre><code>## ℹ tmap mode set to &quot;plot&quot;.</code></pre>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>rose_palette <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#fde0dd&quot;</span>, <span class="st">&quot;#fa9fb5&quot;</span>, <span class="st">&quot;#c51b8a&quot;</span>, <span class="st">&quot;#7a009a&quot;</span>,<span class="st">&quot;#49006a&quot;</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="fu">tm_shape</span>(geo_data) <span class="sc">+</span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="st">&quot;pm_velo&quot;</span>, </span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>              <span class="at">style =</span> <span class="st">&quot;jenks&quot;</span>,</span>
-<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>              <span class="at">n =</span> <span class="dv">5</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>              <span class="at">palette =</span> rose_palette,</span>
-<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>              <span class="at">title =</span> <span class="st">&quot;Part modale du vélo (%) dans les trajets domicile-travail&quot;</span>) <span class="sc">+</span>   </span>
-<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">&quot;Part modale du vélo en Charente-Maritime dans les déplacements domicile-travail par commune en 2021&quot;</span>)</span></code></pre></div>
-<pre><code>## 
-## ── tmap v3 code detected ───────────────────────────────────────────────────────
-## [v3-&gt;v4] `tm_polygons()`: instead of `style = &quot;jenks&quot;`, use fill.scale =
-## `tm_scale_intervals()`.
-## ℹ Migrate the argument(s) &#39;style&#39;, &#39;n&#39;, &#39;palette&#39; (rename to &#39;values&#39;) to
-##   &#39;tm_scale_intervals(&lt;HERE&gt;)&#39;[v3-&gt;v4] `tm_polygons()`: migrate the argument(s) related to the legend of the
-## visual variable `fill` namely &#39;title&#39; to &#39;fill.legend = tm_legend(&lt;HERE&gt;)&#39;[v3-&gt;v4] `tm_layout()`: use `tm_title()` instead of `tm_layout(main.title = )`[plot mode] fit legend/component: Some legend items or map compoments do not
-## fit well, and are therefore rescaled.
-## ℹ Set the tmap option `component.autoscale = FALSE` to disable rescaling.</code></pre>
-<p><img src="03_ChMv2_files/figure-html/carto2-1.png" width="672" /></p>
-</div>
 <div
-id="nombre-de-personnes-utilisant-le-vélo-comme-mode-de-transport-principal-dans-les-déplacements-domicile-travail-par-commune-de-charente-maritime-insee-2021"
-class="section level2" number="3">
-<h2><span class="header-section-number">3</span> Nombre de personnes
-utilisant le vélo comme mode de transport principal dans les
-déplacements domicile-travail par commune de Charente-Maritime (INSEE,
-2021)</h2>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co">#Representer les donnees d&#39;usage dans le département (bis)</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>nb_velo <span class="ot">&lt;-</span> <span class="fu">st_centroid</span>(geo_data)</span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co"># Vérification : présnece de la variable xvelo </span></span>
-<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>nb_velo<span class="sc">$</span>xvelo <span class="ot">&lt;-</span> geo_data<span class="sc">$</span>xvelo  </span>
-<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a></span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
-<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">&quot;plot&quot;</span>)</span></code></pre></div>
-<pre><code>## ℹ tmap mode set to &quot;plot&quot;.</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">tm_shape</span>(geo_data) <span class="sc">+</span></span>
-<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">fill.alpha =</span> <span class="fl">0.2</span>, <span class="at">border.col =</span> <span class="st">&quot;grey70&quot;</span>, <span class="at">col =</span> <span class="st">&quot;grey80&quot;</span>) <span class="sc">+</span></span>
-<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>  <span class="fu">tm_shape</span>(nb_velo) <span class="sc">+</span></span>
-<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>  <span class="fu">tm_symbols</span>(<span class="at">size =</span> <span class="st">&quot;xvelo&quot;</span>, <span class="at">border.col =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>) <span class="sc">+</span></span>
-<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">&quot;Nombre de personnes utilisant le vélo comme mode de transport principal dans les déplacements domicile-travail par commune de Charente-Maritime (INSEE, 2021)&quot;</span>)</span></code></pre></div>
-<pre><code>## 
-## ── tmap v3 code detected ───────────────────────────────────────────────────────
-## [v3-&gt;v4] `tm_polygons()`: use &#39;fill&#39; for the fill color of polygons/symbols
-## (instead of &#39;col&#39;), and &#39;col&#39; for the outlines (instead of &#39;border.col&#39;).[tm_polygons()] Argument `fill.alpha` unknown.[v3-&gt;v4] `tm_layout()`: use `tm_title()` instead of `tm_layout(main.title = )`[plot mode] fit legend/component: Some legend items or map compoments do not
-## fit well, and are therefore rescaled.
-## ℹ Set the tmap option `component.autoscale = FALSE` to disable rescaling.</code></pre>
-<p><img src="03_ChMv2_files/figure-html/carto3-1.png" width="672" /></p>
+id="la-nouvelle-aquitaine-en-vélo-entre-la-charente-maritime-et-bordeaux"
+class="section level1" number="1">
+<h1><span class="header-section-number">1</span> La Nouvelle-Aquitaine
+en vélo : entre la Charente-Maritime et Bordeaux</h1>
+<p>En 2019, le Schéma national des véloroutes voit le jour, dans la
+continuité du Schéma national des véloroute et des voies vertes (1998).
+Les véloroutes sont définies par l’article L154-1 du code de la voirie
+routière. Ce sont « des itinéraires continus destinés à faciliter la
+circulation des cyclistes sur de moyennes et de longues distances.
+(…)Les véloroutes relient les territoires entre eux et permettent de
+traverser les villes dans de bonnes conditions » Les véloroutes
+empruntent des aménagements cyclables divers : pistes cyclables, des
+voies vertes, des voies à faible trafic…</p>
+<p><strong>On compte effectivement une augmentation de passages des
+vélos entre 2019 et 2023 de l’ordre de 37% selon Vélo &amp;
+Territoires.</strong></p>
+<p>Cet attrait politique pour le vélo s’explique aussi par les retombées
+économiques qu’ils peuvent engendrer. En effet, les itinéraires
+cyclables peuvent s’inscrire dans le développement touristique des
+territoires. En cela, l’analyse de la fréquentation des itinéraires
+révèle un pic estival de fréquentation, et une augmentation de la
+fréquentation des itinéraires liés aux loisirs (+7% entre 2019 et 2020
+selon Vélo &amp; Territoires).</p>
+<p><strong>Les grands itinéraires qui traversent la France</strong>, et
+la région de Nouvelle-Aquitaine sur laquelle nous allons nous pencher
+(comme la Velodyssée, la Scandibérique, ou encore les chemins de
+Saint-Jacques à velo), <strong>s’inscrivent aussi dans un plan marketing
+touristique.</strong> La France cherche à se positionner comme
+destination cyclable comme le montre son plan « Stratégie nationale du
+tourisme à vélo » ou encore le site internet francevelotourisme.fr qui
+recense près de 25000 km cyclables sur le territoire national.</p>
+<p>En dehors des itinéraires touristiques, <strong>ces aménagements
+cyclables sont aussi considérés comme nécessaires au vu de l’inégale
+exposition aux risques des cyclistes par rapport aux
+automobilistes</strong>. L’ONISR considère que qu’un cycliste a 8 fois
+plus de chance d’être blessé qu’un automobiliste, et 20 fois plus de
+chance d’être blessé qu’un piéton. <strong>Le risque d’être hospitalisé
+est aussi plus élevé pour les cyclistes que pour les automobilistes (12
+fois supérieur)</strong> ou les piétons (ONISR) . Le triste fait divers
+d’octobre dernier illustre bien cette différence .</p>
+<p>Aussi, compte tenu de la concentration d’aménagements cyclables en
+Nouvelle-Aquitaine, et de son attrait cyclotouristique, nous trouvons
+intéressant de nous pencher sur les accidents qu’ils peuvent engendrer.
+Pour cela, nous allons analyser le chevelu d’aménagements cyclables en
+Charente-Maritime et dans la métropole bordelaise ; puis nous allons
+nous pencher sur les accidents consignés dans la base de données de
+l’ONISR dont un cycliste sort blessé.</p>
+<p>Pour réaliser ces cartes et graphiques, nous avons utilisé plusieurs
+sources de données, qui sont à retrouver dans le tableau ci-dessous</p>
+</div>
+<div id="jeux-de-données-utilisés" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Jeux de données
+utilisés</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>table <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/data_proj_velobobo_province.csv&quot;</span>, <span class="at">fileEncoding =</span> <span class="st">&quot;UTF-8&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(table)</span></code></pre></div>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="2%" />
+<col width="5%" />
+<col width="3%" />
+<col width="17%" />
+<col width="3%" />
+<col width="52%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">nom.fichier</th>
+<th align="left">données</th>
+<th align="left">type.de.données</th>
+<th align="left">projection</th>
+<th align="left">source</th>
+<th align="left">date</th>
+<th align="left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">VT_2024_cyclabilite_dpt17</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">Vélo et Territoires</td>
+<td align="left">2021</td>
+<td align="left">cyclabilité dans le département de Charente</td>
+</tr>
+<tr class="even">
+<td align="left">VT_2024_cyclabilite_dpt33</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">Vélo et Territoires</td>
+<td align="left">2021</td>
+<td align="left">cyclabilité dans le département de Gironde</td>
+</tr>
+<tr class="odd">
+<td align="left">parts_modales_nouvelle_aquitaine_2021</td>
+<td align="left">chiffre</td>
+<td align="left">excel</td>
+<td align="left">na</td>
+<td align="left">Vélo et Territoires / INSEE (enquête mobilités,
+2023)</td>
+<td align="left">2021</td>
+<td align="left">part modale du vélo en Nouvelle Aquitaine en 2021 dans
+les déplacements domicile-travail. Attention, l’intermodalité n’est pas
+prise en compte dans l’étude.</td>
+</tr>
+<tr class="even">
+<td align="left">Les séries longues labellisées du BAAC_2023</td>
+<td align="left">chiffre</td>
+<td align="left">excel</td>
+<td align="left">na</td>
+<td align="left">ONISR</td>
+<td align="left">2023</td>
+<td align="left">accidents de la routes selon les usagers entre 1967 et
+2023</td>
+</tr>
+<tr class="odd">
+<td align="left">france-20250501</td>
+<td align="left">carto</td>
+<td align="left">json</td>
+<td align="left">WGS 1984</td>
+<td align="left">Geovélo / Open Street Map</td>
+<td align="left">1/5/2025</td>
+<td align="left">pistes cyclables en France</td>
+</tr>
+<tr class="even">
+<td align="left">ame_velo_dpt17</td>
+<td align="left">carto</td>
+<td align="left">json</td>
+<td align="left">WGS 1984</td>
+<td align="left">Geovélo / Open Street Map</td>
+<td align="left">1/5/2025</td>
+<td align="left">pistes cyclables de Charente maritime, fichier obtenu
+par exctraction de données du fichier des pistes cyclables au niveau
+national</td>
+</tr>
+<tr class="odd">
+<td align="left">communes</td>
+<td align="left">carto</td>
+<td align="left">json</td>
+<td align="left">Lambert 93</td>
+<td align="left">data.gouv</td>
+<td align="left"></td>
+<td align="left">les communes de nouvelle-aquitaine</td>
+</tr>
+<tr class="even">
+<td align="left">acc_velo_dpt17_2023_communes</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">onisr</td>
+<td align="left">2023</td>
+<td align="left">le nombre d’accidents qui comprend une bicyclette en
+Charente Maritime. Chiffres tirés de la base des séries de 2023 de
+l’ONISR</td>
+</tr>
+<tr class="odd">
+<td align="left">acc_velo_dpt17_comparaison-2019-2023</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">onisr</td>
+<td align="left">2019/2023</td>
+<td align="left">le nombre d’accidents qui comprend une bicyclette en
+Charente Maritime en 2019 et 2023. Chiffres tirés de la base des séries
+de 2023 de l’ONISR</td>
+</tr>
+<tr class="even">
+<td align="left">bdx-2023</td>
+<td align="left">carto</td>
+<td align="left">geojson</td>
+<td align="left">WGS 1984</td>
+<td align="left">Geovélo / Open Street Map</td>
+<td align="left">01/01/2023</td>
+<td align="left">pistes cyclables à Bordeaux, fichier obtenu par
+exctraction de données du fichier des pistes cyclables au niveau
+national</td>
+</tr>
+<tr class="odd">
+<td align="left">caract-2023</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">onisr</td>
+<td align="left">2023</td>
+<td align="left">Le nombre d’accidents qui comprend une bicyclette en à
+Bordeaux. Chiffres tirés de la base des séries de 2023 de l’ONISR par
+des filtres</td>
+</tr>
+<tr class="even">
+<td align="left">vehicules-2023</td>
+<td align="left">chiffre</td>
+<td align="left">csv</td>
+<td align="left">na</td>
+<td align="left">onisr</td>
+<td align="left">2023</td>
+<td align="left">Le nombre d’accidents qui comprend une bicyclette en à
+Bordeaux. Chiffres tirés de la base des séries de 2023 de l’ONISR par
+des filtres</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 <footer>2025, site par Maury Victor et Moreau Léna</footer>
